@@ -263,6 +263,34 @@ function numberOfGiverRoom() {
     }
 }
 
+function getTotalCourseHourOfGivenStudent() {
+    clearTable("tbl");
+    if(sIdInput.value!="") {
+        let student = data.students.get(sIdInput.value);
+        var total = 0;
+
+        for (let course of student.courses) {
+            let time = course.time;
+            let hours = time.split("-");
+            let first = hours[0].slice(0, 2);
+            let last = hours[1].slice(0, 2);
+            let courseHour = Number(last) - Number(first);
+            console.log(courseHour);
+            total = total + courseHour;
+        }
+
+        let tbl = document.getElementById("tbl");
+        let row = tbl.insertRow(0);
+        row.insertCell(0).innerHTML = "Total Exam Hours of Given Student: " + total;
+    }
+    else{
+        let tbl = document.getElementById("tbl");
+        let row = tbl.insertRow(0);
+        row.insertCell(0).innerHTML = "Exam Room is Empty!";
+
+    }
+}
+
     </script>
 </head>
 
@@ -295,6 +323,7 @@ function numberOfGiverRoom() {
 <p><b>Student List of Given Course:</b> <button onClick='studentListGivenCourseButton()' style="width: 100px ; height: 26px; margin-left: 89px; font-weight: bold">Get</button></p>
 <p><b>Course List of Given Exam Room:</b> <button onClick='courseListGivenExamRoomButton()' style="width: 100px ; height: 26px; margin-left: 58px; font-weight: bold">Get</button></p>
 <p><b>Number of Courses in Given Room: </b> <button onClick='numberOfGiverRoom()' style="width: 100px ; height: 26px; margin-left: 49px; font-weight: bold">Get</button></p>
+<p><b>Total Exam Hours of Given Student: </b> <button onClick='getTotalCourseHourOfGivenStudent()' style="width: 100px ; height: 26px; margin-left: 45px; font-weight: bold">Get</button></p>
 <hr />
 
 <button onClick='clearButton("tbl")' style="width: 80px ; height: 26px; font-weight: bold">Clear</button>
