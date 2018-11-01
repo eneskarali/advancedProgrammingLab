@@ -9,7 +9,7 @@
     <script>
 "use strict";
 function getRandomStudent() {
-    let keys = Array.from(data.students.keys());;
+    let keys = Array.from(data.students.keys());
     return data.students.get(keys[Math.floor(Math.random() * keys.length)]);
 }
 
@@ -24,6 +24,7 @@ function clearButton(tblID) {
     sIdInput.value="";
     cCodeInput.value="";
     gpaInput.value="";
+    eRoomInput.value="";
 }
 
 function addStudentTableHead(tblID) {
