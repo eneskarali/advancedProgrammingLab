@@ -23,6 +23,7 @@ function getText(txt){
 fetchText = txt;
 }
 
+
 function isText(f) {
     console.assert(f instanceof File);
     return f.type.startsWith("text") || f.name.endsWith(".md")
@@ -45,18 +46,18 @@ function fileSelect(t) { //target is the button
 
 		reader.onload = function(e) {  
 			var localText = e.target.result;
-			if(fetchText==localText){
+			if(localText.normalize().replace(/\s/g,'')==fetchText.normalize().replace(/\s/g,'')){
 				isFind=true;
 				findedFileName = file.name;
 				out.innerText = t.files.length + " items checked, "+ findedFileName + " has the same content";
 			}
 			readFile(index+1);
     }
-    reader.readAsText(file);
+    reader.readAsBinaryString(file);
   }
 readFile(0);
 
-}, 10);
+}, 15);
 
 if(isFind==false){
 	out.innerText = t.files.length + " items checked, all files different ";
@@ -78,7 +79,6 @@ if(isFind==false){
 
 <script>
     title.innerText = document.title;
-    //sample.innerText = fileSelect.toString();
 </script>
 
 </body>
