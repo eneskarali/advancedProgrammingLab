@@ -46,7 +46,7 @@ function fileSelect(t) { //target is the button
 
 		reader.onload = function(e) {  
 			var localText = e.target.result;
-			if(localText.normalize().replace(/\s/g,'')==fetchText.normalize().replace(/\s/g,'')){
+			if(localText.replace(/\s/g,'')==fetchText.replace(/\s/g,'')){
 				isFind=true;
 				findedFileName = file.name;
 				out.innerText = t.files.length + " items checked, "+ findedFileName + " has the same content";
