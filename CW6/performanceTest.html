@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <script src="Database.js"></script>
+    <title>Performance Test </title>
+
+<script>
+"use strict";
+var randomArray = [];
+const url = "https://maeyler.github.io/JS/data/";
+const array = [], map = new Map();
+function readData(file) {
+    console.log("readData "+file);
+    fetch(url+file)
+        .then(r => r.text(), console.log)
+        .then(addStudents, console.log);
+}
+
+function getRandomStrundentID(){
+    for(let i = 0; i<10000 ; i++){
+        let i = Math.floor(Math.random()*1000000000)+'';
+        randomArray.push(i);   
+    }
+    randomArray.push("214111457");
+    randomArray.push("214111570");
+}
+function parseStudent(line) {
+    let b = line.split("\t");
+    let id = b[0], name = b[1], gpa = b[2];
+    let std = new Student(id, name, gpa);
+    let list = [];
+    for (let i=3; i<b.length; i++) 
+        list.push(b[i]);
+    std.courses = list
+    return std
+}
+function addStudents(txt) {
+    let msg = "\nData contains ";
+    msg += txt.length+" chars, ";
+    let a = txt.split("\n");
+    msg += a.length+" lines \n";
+    for (let s of a) {
+      let std = parseStudent(s);
+      array.push(std.id); map.set(std.id,std);
+    }
+    msg += array.length+" students, "
+    msg += map.length+" distinct names"
+    out.innerText += msg
+}
+function intersect1(a, b) { //fast
+    let count = 0;
+    for (let x of a)
+      if (b.has(x)) count++
+    return count;
+}
+function intersect2(a, b) { //slow
+    let count = 0
+    for (let x of a)
+        if (b.includes(x)) count++
+    return count
+}
+function timingMap(f) {
+    let t = performance.now()
+    let x = f(randomArray , map)  //calculate intersection by itself
+    t = performance.now() - t
+    let s = f.name+": "+t.toPrecision(3)+" msec "+x
+    out.innerText += "\n"+s; console.log(s)
+}
+
+function timingArray(f) {
+    let t = performance.now()
+    let x = f(randomArray , array)  //calculate intersection by itself
+    t = performance.now() - t
+    let s = f.name+": "+t.toPrecision(3)+" msec "+x
+    out.innerText += "\n"+s; console.log(s)
+}
+</script>
+</head>
+
+<body>
+<h2 id=title></h2>
+<button onClick='timingMap(intersect1)'>Map</button>
+<button onClick='timingArray(intersect2)'>Array</button>
+<hr/>
+<p id=out>Class Work 6</p>
+
+<script>
+    title.innerText = document.title;
+    readData("Students.txt");
+    getRandomStrundentID();
+</script>
+
+</body>
+</html>
