@@ -12,3 +12,4 @@ All Work On Advenced Programming Lesson
   
   6.[CW5 - File Operations](./CW5/selectFile.html)
   
+  7.[CW6 - Performance Test](./CW6/performanceTest.html)
