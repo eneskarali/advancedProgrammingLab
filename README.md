@@ -15,3 +15,5 @@ All Work On Advenced Programming Lesson
   7.[CW6 - Performance Test](./CW6/performanceTest.html)
   
   8.[HW3 - Animations](./HW3/animations.html)
+  
+  9.[CW7](./CW7/documentObjectModel.html)
