@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Document Object Model </title>
+
+    <style>
+            table {
+                width: 400px;
+            }
+            table, th, td {
+                border: 1px solid black;
+                border-collapse: collapse;
+            }
+            th, td {
+                padding: 10px;
+                text-align: left;
+            }
+
+            table#myTable {  
+                background-color: #cecdcd;
+            }
+            table#myTable tbody tr:nth-child(even){
+                background-color: #eeeeee;
+            }
+            table#myTable tbody tr:nth-child(odd){
+                background-color: #ffffff;
+            }
+            </style>
+
+    <script>
+        function readDataFromUrl() {
+            let url = "https://maeyler.github.io/JS/data/Students.txt";
+            fetch(url)
+                .then(res => res.text())
+                .then(res => addTextDataToTable(res))
+        }
+
+        function addTextDataToTable(txt) {
+            var lines = txt.split("\n");
+            for (var line of lines) {
+                var words = line.split("\t");
+                let student = { "id": words[0], "name": words[1], "gpa": words[2] };
+                studentsData.push(student);
+            }
+            addDataToTable();
+        }
+        function addDataToTable() {
+            var tbl = document.getElementById("myTable");
+            
+            var head = tbl.insertRow(0);
+            var headIndex = 0;
+            var rowIndex = 1;
+            var keys = [];
+            for(var key of Object.keys(studentsData[0])){
+                var c = head.insertCell(headIndex);
+                c.innerHTML ="<b>" +key.toUpperCase()+"</b>";
+                keys.push(key);
+                headIndex++;
+            }
+            
+            for(var student of studentsData){
+                var row = tbl.insertRow(rowIndex);
+                for(let i=0;i<headIndex;i++ ){
+                    var c1 = row.insertCell(i);
+                    c1.innerHTML = student[keys[i]]; 
+                }
+                rowIndex++;
+            }
+
+
+        }
+    </script>
+</head>
+
+<body>
+    <table id="myTable" > </table>
+    <script>
+        readDataFromUrl();
+        var studentsData = [];
+    </script>
+
+</body>
+
+</html>
