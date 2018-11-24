@@ -1,11 +1,11 @@
 {
     "name": "Enes Karali's Work",
-    "start_url": "https://eneskarali.github.io/advancedProgrammingLab/PWA/index.html",
+    "start_url": "https://eneskarali.github.io/advancedProgrammingLab/index.html",
     "display": "standalone",
     "background_color": "green",
     "icons": [
       {
-        "src": "JS.png",
+        "src": "PWA/JS.png",
         "sizes": "192x192",
         "type": "image/png"
       }
