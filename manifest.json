@@ -1,6 +1,6 @@
 {
     "name": "Enes Karali's Work",
-    "start_url": "https://eneskarali.github.io/advancedProgrammingLab/index.html",
+    "start_url": "/advancedProgrammingLab/index.html",
     "display": "standalone",
     "background_color": "green",
     "icons": [
