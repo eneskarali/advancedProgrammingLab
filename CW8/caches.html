@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Caches</title>
+</head>
+
+<script>
+    function readCaches(cacheName) {
+        caches.open(cacheName)
+            .then(c => { c.keys().then(c => cacheResponseData = c).then(writeData) })
+            
+    }
+
+    function writeData(){
+        var table = document.getElementById("dataTable");
+
+        table.innerHTML = "";
+
+        var head = table.insertRow(0);
+        
+        var h1 = head.insertCell(0);
+        var h2 = head.insertCell(1);
+        var h3 = head.insertCell(2);
+
+        h1.innerHTML = "<b>NO</b>";
+        h2.innerHTML = "<b>SIZE</b>";
+        h3.innerHTML = "<b>TYPE</b>";
+        for(let i =0 ; i<cacheResponseData.length; i++){
+            fetch(cacheResponseData[i].url)
+                .then(r => r.blob())
+                .then(r =>setTimeout(function() {
+                    var row = table.insertRow(i+1);
+
+                    var c1 = row.insertCell(0);
+                    var c2 =  row.insertCell(1);
+                    var c3 = row.insertCell(2);
+                    
+                    c1.innerHTML = (i+1)+". ";
+                    c2.innerHTML = r.size+" bytes";
+                    c3.innerHTML = r.type+""; 
+                    return null;
+                },30))
+        }
+    }
+</script>
+
+<body>
+    <h3>This Page Reads Cache which is ns in My Homepage</h3>
+    <br>
+    <table id="dataTable" style="width: 400px"></table>
+    <script>
+        var cacheResponseData = null;
+        readCaches('ns');
+    </script>
+
+</body>
+
+</html>
