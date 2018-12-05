@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>CW9 - SVG</title>
+
+    <style>
+        svg {
+        background:cyan;
+        font: 10px arial, sans-serif;
+    }
+  </style>
+</head>
+
+<body>
+    <h2>SVG Sample</h2>
+    <p>Change Circle Color: <input type="color" value="#ff0000" onchange="circleColorChanged(this.value)" style="margin-left: 10px"></p>
+    <p>Change Rect Color: <input type="color" value="#ff0000" onchange="rectColorChanged(this.value)"style="margin-left: 20px"></p>
+    <p>Change Positions: <input type="button" value="Mirror" onclick="changePositions()"style="margin-left: 30px"> </p>
+    <p>Scale: <input type="range" min="10" max="50" value="10" onchange="scaleChanged(this.value)" style="margin-left: 70px"></p>
+    <br>
+    <svg id='svg' width='340' height='100'>
+        <circle id='svgCircle' cx='50' cy='50' r='40' style='fill:yellow;stroke:blue;stroke-width:4' />
+        <text id='svgTextCircle' x='35' y='55' fill='black'>Circle</text>
+        <rect id='svgRect' x='110' y='10' width='100' height='80' style='fill:pink;stroke:red;stroke-width:5' />
+        <text id='svgTextRect' x='145' y='55' fill='blue'>Rect</text>
+    </svg>
+
+    <script>
+        var sizeFactor = 1;
+        function circleColorChanged(color) {
+            var circle = document.getElementById("svgCircle");
+            circle.style.fill = color;
+
+        }
+        function changePositions() {
+            var circle = document.getElementById("svgCircle");
+            var rect = document.getElementById("svgRect");
+            var cText = document.getElementById("svgTextCircle");
+            var rText = document.getElementById("svgTextRect");
+
+            if (Number(circle.getAttribute('cx')) < 100 * sizeFactor) {
+                circle.setAttribute('cx', 170 * sizeFactor);
+                rect.setAttribute('x', 10 * sizeFactor);
+                cText.setAttribute('x', 155 * sizeFactor);
+                rText.setAttribute('x', 45 * sizeFactor);
+            }
+            else {
+                circle.setAttribute('cx', 50 * sizeFactor);
+                rect.setAttribute('x', 110 * sizeFactor);
+                cText.setAttribute('x', 35 * sizeFactor);
+                rText.setAttribute('x', 145 * sizeFactor);
+            }
+        }
+
+        function scaleChanged(size) {
+            sizeFactor = Number(size) / 10;
+            var circle = document.getElementById("svgCircle");
+            var rect = document.getElementById("svgRect");
+            var svg = document.getElementById("svg");
+            var cText = document.getElementById("svgTextCircle");
+            var rText = document.getElementById("svgTextRect");
+
+            svg.setAttribute('width', 340 * sizeFactor);
+            svg.setAttribute('height', 100 * sizeFactor);
+
+
+            circle.setAttribute('r', 40 * sizeFactor);
+            circle.setAttribute('cx', 50 * sizeFactor);
+            circle.setAttribute('cy', 50 * sizeFactor);
+
+            rect.setAttribute('width', 100 * sizeFactor);
+            rect.setAttribute('height', 80 * sizeFactor);
+            rect.setAttribute('x', 110 * sizeFactor);
+            rect.setAttribute('y', 10 * sizeFactor);
+
+            cText.setAttribute('x', 35 * sizeFactor);
+            cText.setAttribute('y', 55 * sizeFactor);
+
+            rText.setAttribute('x', 145 * sizeFactor);
+            rText.setAttribute('y', 55 * sizeFactor);
+
+
+            svg.style.background = "rgb("+10*sizeFactor*2+","+100*sizeFactor/2+","+200*sizeFactor/4+")";
+
+        }
+        function rectColorChanged(color){
+            var rect = document.getElementById("svgRect");
+            rect.style.fill = color;
+        }
+    </script>
+
+</body>
+
+</html>
