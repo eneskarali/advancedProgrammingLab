@@ -3,29 +3,107 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="viewport" content="width=device-width">
-    <title>Solar System</title>
+    <title>3D Solar System</title>
     <style>
         body {
-            margin: 0;
+            margin: 0 auto;
+            background: black;
+            font-family: Arial, Helvetica, sans-serif;
+            background-image: url(stars.jpg);
+            background-size:cover;
         }
-
         canvas {
             width: 100vw;
-            height: 100vh;
+            height: 85vh;
+            
+        }
+        .menu {
+            display: flex;
+            color: #ffffff;
+            list-style: none;    
+            align-items: center;
+            justify-content: space-around;
+        }
+        .menu li{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu li h4 {
+            float: left;
             display: block;
+        }
+        .menu li input {
+            float: left;
+            width: auto;
+            display: block;
+            margin-left: 10px;
+        }
+        .menu .ref {
+            left: 10px;
+            bottom: 15px;
+            display: block;
+            position: absolute;
+        }
+        .menu .ref h5 {
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+            color: #c7c2c2;
+        }
+        .menu .ref h5 a {
+            font-size: 12px;
+            color: #c7c2c2;
+        }
+        @media (max-width: 767px) {
+            .menu {
+                display: block;
+                position: relative;
+            }
+            .ref {
+                bottom: 0!important;
+                display: flex!important;
+                position: relative!important;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" ></canvas>
+    <ul class="menu">
+        <li>
+            <h4>Speed:</h4><input type="range" id="speedRange" value="10" min="1" max="100" oninput="speedRangeChanged(this.value)" onchange="speedRangeChanged(this.value)" />
+        </li>
+        <li>
+            <h4>View Angle:</h4><input id="viewAngleRange" value="90" min="-200" max="200" oninput="viewAngleChanged(this.value)" onchange="viewAngleChanged(this.value)"
+                type="range" />
+        </li>
+        <li>
+            <h4>Zoom:</h4><input id="zoomRange" min="10" max="100" oninput="zoomRangeChanged(this.value)"  onchange="zoomRangeChanged(this.value)" type="range" />
+        </li>
+        <li>
+            <h4>Line Mode:</h4><input id="lineModeRange" onchange="lineModeChanged()" type="checkbox" />
+        </li>
+        <li class="ref">
+            <h5>Ref: <a target="_blank" href="https://webglfundamentals.org/">webglfundamentals.org</a></h5>
+        </li>
+    </ul>
 
     <script>
+        var canvas = document.getElementById("canvas");
+        var gl = canvas.getContext("webgl");
+
+        var viewAngleValue = 90;
+        var zoomValue = 5;
+        var speedFactor = 1;
+        var drawElement = gl.TRIANGLES;
+        var cameraControl = 0;
         function main(c) {
-            var canvas = document.getElementById("canvas");
-            var gl = canvas.getContext("webgl");
+
             if (!gl) {
                 console.log("webgl context eroor!");
             }
@@ -58,28 +136,77 @@
         gl_FragColor = v_color * u_colorMult;
     }
 `;
+            //eatrh vertice intilize
+            var earthVertices = createSphereVertices(8, 24, 24);
 
-            var sphereVertices = createSphereVertices(11, 24, 24);
-
-            var arrays = makeRandomVertexColors(deindexVertices(sphereVertices), {
+            var earthArrays = makeRandomVertexColors(deindexVertices(earthVertices), {
                 vertsPerColor: 6,
                 rand: function (ndx, channel) {
                     return channel < 3 ? ((128 + Math.random() * 128) | 0) : 255;
                 }
             });
 
-            var spherebuffer = {
-                attribs: createAttribsFromArrays(gl, arrays, createMapping(arrays)),
+            var earthSpherebuffer = {
+                attribs: createAttribsFromArrays(gl, earthArrays, createMapping(earthArrays)),
             };
 
-            var indices = arrays.indices;
+            var indices = earthArrays.indices;
             if (indices) {
                 indeces = makeTypedArray(indices, "indices");
-                spherebuffer.indices = createBufferFromTypedArray(gl, indices, gl.ELEMENT_ARRAY_BUFFER);
-                spherebuffer.numElements = indices.length;
+                earthSpherebuffer.indices = createBufferFromTypedArray(gl, indices, gl.ELEMENT_ARRAY_BUFFER);
+                earthSpherebuffer.numElements = indices.length;
             } else {
-                spherebuffer.numElements = getNumElementsFromNonIndexedArrays(arrays);
+                earthSpherebuffer.numElements = getNumElementsFromNonIndexedArrays(earthArrays);
             }
+            //eath end
+
+            //sun vertice initilize
+            var sunVertices = createSphereVertices(20, 34, 34);
+
+            var sunArrays = makeRandomVertexColors(deindexVertices(sunVertices), {
+                vertsPerColor: 6,
+                rand: function (ndx, channel) {
+                    return channel < 3 ? ((128 + Math.random() * 70) | 0) : 255;
+                }
+            });
+
+            var sunSpherebuffer = {
+                attribs: createAttribsFromArrays(gl, sunArrays, createMapping(sunArrays)),
+            };
+
+            var sunindices = sunArrays.indices;
+            if (sunindices) {
+                sunindeces = makeTypedArray(sunindices, "indices");
+                sunSpherebuffer.indices = createBufferFromTypedArray(gl, sunindices, gl.ELEMENT_ARRAY_BUFFER);
+                sunSpherebuffer.numElements = sunindices.length;
+            } else {
+                sunSpherebuffer.numElements = getNumElementsFromNonIndexedArrays(sunArrays);
+            }
+            //sun vertice end
+
+            //moon vertices begin
+            var moonVertices = createSphereVertices(2, 8, 8);
+
+            var moonArrays = makeRandomVertexColors(deindexVertices(moonVertices), {
+                vertsPerColor: 6,
+                rand: function (ndx, channel) {
+                    return channel < 3 ? ((128 + Math.random() * 128) | 0) : 255;
+                }
+            });
+
+            var moonSpherebuffer = {
+                attribs: createAttribsFromArrays(gl, moonArrays, createMapping(moonArrays)),
+            };
+
+            var moonindices = moonArrays.indices;
+            if (moonindices) {
+                moonindeces = makeTypedArray(moonindices, "indices");
+                moonSpherebuffer.indices = createBufferFromTypedArray(gl, moonnindices, gl.ELEMENT_ARRAY_BUFFER);
+                moonSpherebuffer.numElements = moonindices.length;
+            } else {
+                moonSpherebuffer.numElements = getNumElementsFromNonIndexedArrays(moonArrays);
+            }
+            //moon vertices end
 
             programInfo = createProgramInfo(gl, [vertexShaderSource, fragmentShaderSource]);
 
@@ -181,13 +308,35 @@
             var fieldOfViewRadians = degToRad(60);
             var cameraHeight = 50;
 
-            //---------BURAYA KADAR OKEY--------------------------------
+
+            //earth            
             var sphereUniforms = {
                 u_colorMult: [0.07, 0.49, 0.74, 1],
                 u_matrix: matrixIdentity(),
             };
 
-            var sphereTranslation = [-30, -30, -50];
+            //sun
+            var sunSphereUniforms = {
+                u_colorMult: [0.93, 0.21, 0.13, 1],
+                u_matrix: matrixIdentity(),
+            };
+
+            //moon
+            var moonSphereUniforms = {
+                u_colorMult: [0.301, 0.401, 0.351, 1],
+                u_matrix: matrixIdentity(),
+            };
+
+            //earth
+            var sphereTranslation = [0, 0, 0];
+
+            //sun
+            var sunSphereTranslation = [0, 0, 0];
+
+            //moon
+            var moonSphereTranslation = [0, 0, 0];
+
+
             function computeMatrix(viewProjectionMatrix, translation, xRotation, yRotation) {
                 var matrix = matrixTranslate(viewProjectionMatrix,
                     translation[0],
@@ -196,9 +345,15 @@
                 return matrixYRotate(matrix, yRotation);
             }
 
+
+
             requestAnimationFrame(drawScene);
+
+            var angle = 90;
+            var anglemoon = 90;
             function drawScene(time) {
-                time *= 0.0005;
+                time *= 0.005 * speedFactor;
+
 
                 //resize canvas to display
                 var width = canvas.clientWidth;
@@ -209,7 +364,7 @@
                     canvas.height = height;
                 }
                 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-                gl.clearColor(0, 0, 0, 0.95);
+                gl.clearColor(0, 0, 0, 0);
 
                 gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
                 gl.enable(gl.CULL_FACE);
@@ -219,8 +374,16 @@
                 var aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
                 var projectionMatrix =
                     matrixPerspective(fieldOfViewRadians, aspect, 1, 2000);
-
-                var cameraPosition = [0, 30, 100];
+                 
+                if(canvas.clientWidth<768 && cameraControl<1){
+                    zoomValue = zoomValue*0.7;
+                    cameraControl++;
+                }
+                else if(canvas.clientWidth>=768 && cameraControl>=1){
+                    cameraControl=0;
+                    zoomValue = zoomValue/0.7;
+                }
+                var cameraPosition = [0, viewAngleValue, 800 / zoomValue];
                 var target = [0, 0, 0];
                 var up = [0, 1, 0];
                 var cameraMatrix = matrixLookAt(cameraPosition, target, up);
@@ -228,22 +391,34 @@
                 var viewMatrix = matrixInverse(cameraMatrix);
 
                 var viewProjectionMatrix = matrixMultiply(projectionMatrix, viewMatrix);
-
+                //earth
                 var sphereXRotation = time;
                 var sphereYRotation = time;
+                //sun
+                var sunSphereXRotation = time * 0.1;
+                var sunSphereYRotation = time * 0.1;
+                //moon
+                var moonSphereXRotation = time;
+                var moonSphereYRotation = time;
 
                 gl.useProgram(programInfo.program);
 
-                //set buffer and attribs
+                //---earth--
                 var setters = programInfo.attribSetters;
-                Object.keys(spherebuffer.attribs).forEach(function (name) {
+                Object.keys(earthSpherebuffer.attribs).forEach(function (name) {
                     var setter = setters[name];
                     if (setter) {
-                        setter(spherebuffer.attribs[name]);
+                        setter(earthSpherebuffer.attribs[name]);
                     }
                 });
+                var originX = 0;
+                var originZ = 0;
 
-                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, spherebuffer.indeces);
+                var x = originX + Math.cos(angle) * 70;
+                var z = originZ + Math.sin(angle) * 70;
+                angle = angle - 0.01 * speedFactor;
+                sphereTranslation = [x, 0, z];
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, earthSpherebuffer.indeces);
 
                 sphereUniforms.u_matrix = computeMatrix(
                     viewProjectionMatrix,
@@ -260,7 +435,80 @@
                     }
                 });
 
-                gl.drawArrays(gl.TRIANGLES, 0, spherebuffer.numElements);
+                gl.drawArrays(drawElement, 0, earthSpherebuffer.numElements);
+
+                //---sun---
+                var setters = programInfo.attribSetters;
+                Object.keys(sunSpherebuffer.attribs).forEach(function (name) {
+                    var setter = setters[name];
+                    if (setter) {
+                        setter(sunSpherebuffer.attribs[name]);
+                    }
+                });
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sunSpherebuffer.indeces);
+
+                sunSphereUniforms.u_matrix = computeMatrix(
+                    viewProjectionMatrix,
+                    sunSphereTranslation,
+                    sunSphereXRotation,
+                    sunSphereYRotation);
+
+                //set uniforms
+                var setters = programInfo.uniformSetters;
+                Object.keys(sunSphereUniforms).forEach(function (name) {
+                    var setter = setters[name];
+                    if (setter) {
+                        setter(sunSphereUniforms[name]);
+                    }
+                });
+
+                gl.drawArrays(drawElement, 0, sunSpherebuffer.numElements);
+
+                //--moon--
+                var setters = programInfo.attribSetters;
+                Object.keys(moonSpherebuffer.attribs).forEach(function (name) {
+                    var setter = setters[name];
+                    if (setter) {
+                        setter(moonSpherebuffer.attribs[name]);
+                    }
+                });
+
+                gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, moonSpherebuffer.indeces);
+
+                var originX = 0;
+                var originY = 0;
+
+                var x1 = originX + Math.cos(anglemoon) * 9.2;
+                var y = originY + Math.sin(anglemoon) * 9.2;
+                var z = (x1) + Math.sin(angle) * 70;
+                var x = (x1) + Math.cos(angle) * 70;
+                anglemoon = anglemoon - 0.1 * speedFactor;
+                moonTranslation = [x, y, z];
+                if(angle<=0){
+                    angle = 90;
+                }
+                if(anglemoon<=0){
+                    anglemoon = 90;
+                }
+
+
+                moonSphereUniforms.u_matrix = computeMatrix(
+                    viewProjectionMatrix,
+                    moonTranslation,
+                    moonSphereXRotation,
+                    moonSphereYRotation);
+
+                //set uniforms
+                var setters = programInfo.uniformSetters;
+                Object.keys(moonSphereUniforms).forEach(function (name) {
+                    var setter = setters[name];
+                    if (setter) {
+                        setter(moonSphereUniforms[name]);
+                    }
+                });
+
+                gl.drawArrays(drawElement, 0, moonSpherebuffer.numElements);
+
                 requestAnimationFrame(drawScene);
             }
         }
@@ -272,7 +520,7 @@
         function createSphereVertices(
             radius,
             subdivisionsAxis,
-            subdivisionsHeight,
+            subdivisionsHeight
         ) {
 
             opt_startLatitudeInRadians = 0;
@@ -283,9 +531,6 @@
             const latRange = opt_endLatitudeInRadians - opt_startLatitudeInRadians;
             const longRange = opt_endLongitudeInRadians - opt_startLongitudeInRadians;
 
-            // We are going to generate our sphere by iterating through its
-            //spherical coordinates and generating 2 triangles for each quad on a
-            // ring of the sphere.
             const numVertices = (subdivisionsAxis + 1) * (subdivisionsHeight + 1);
             const positions = createAugmentedTypedArray(3, numVertices);
             const normals = createAugmentedTypedArray(3, numVertices);
@@ -523,9 +768,29 @@
                 return array.data.length / array.numComponents;
             }
         }
+        //input functions
 
+        function zoomRangeChanged(value) {
+            zoomValue = value/10;
+        }
 
-        //martix and math functions
+        function viewAngleChanged(value) {
+            viewAngleValue = value;
+        }
+
+        function speedRangeChanged(value) {
+            speedFactor = value/10;
+        }
+        function lineModeChanged() {
+            if (drawElement === gl.TRIANGLES) {
+                drawElement = gl.LINES;
+            }
+            else {
+                drawElement = gl.TRIANGLES;
+            }
+        }
+
+        //matrix and math functions
         function matrixIdentity() {
             var array16 = new Float32Array(16);
 
@@ -842,6 +1107,8 @@
             array16[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
             return array16;
         }
+
+
     </script>
 
 </body>
