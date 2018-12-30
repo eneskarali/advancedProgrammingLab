@@ -18,7 +18,9 @@ All Work On Advenced Programming Lesson
   
   9. [CW7](./CW7/documentObjectModel.html)
   
-   10.[PWA](./index.html)
-   
-   11.[CW8 - Caches](./CW8/caches.html)
+  10.[PWA](./index.html)
+  
+  11.[CW8 - Caches](./CW8/caches.html)
+  
+  12.[CW9 - SVG](./CW9/index.html)
  
